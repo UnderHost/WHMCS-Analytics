@@ -1,0 +1,107 @@
+/*! CustomerPanel Analytics widget (c) 2026 UnderHost.com */
+.cpga { font-size: 13px; }
+.cpga-empty { padding: 22px; text-align: center; color: var(--cp-text-soft, #64748b); }
+.cpga-head {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 8px; margin-bottom: 10px;
+}
+.cpga-property { font-weight: 800; color: var(--cp-text, #16233a); }
+.cpga-property i { color: var(--cp-accent, #5865f2); margin-right: 5px; }
+.cpga-range { display: inline-flex; align-items: center; gap: 6px; }
+.cpga-range input[type="date"] { width: 140px; }
+.cpga-range span { color: var(--cp-text-faint, #8a97ac); }
+
+.cpga-tabs {
+    display: flex; flex-wrap: wrap; gap: 2px; list-style: none;
+    margin: 0 0 12px; padding: 0 0 2px;
+    border-bottom: 2px solid var(--cp-border, #e3e8f0);
+    overflow-x: auto;
+}
+.cpga-tabs li { list-style: none; }
+.cpga-tabs a {
+    display: inline-block; padding: 7px 12px; white-space: nowrap;
+    color: var(--cp-text-soft, #5b6b84); font-weight: 700; font-size: 12.5px;
+    border-bottom: 2px solid transparent; margin-bottom: -2px;
+    text-decoration: none !important; border-radius: 8px 8px 0 0;
+}
+.cpga-tabs a:hover { background: var(--cp-surface-2, #f7f9fc); color: var(--cp-text, #16233a); }
+.cpga-tabs a.active { color: var(--cp-accent-deep, #4752c4); border-bottom-color: var(--cp-accent, #5865f2); }
+
+.cpga-loading { padding: 26px; text-align: center; color: var(--cp-text-soft, #64748b); }
+.cpga-kpis {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px; margin-bottom: 14px;
+}
+.cpga-kpi {
+    background: var(--cp-surface-2, #f7f9fc);
+    border: 1px solid var(--cp-border, #e3e8f0);
+    border-radius: 12px; padding: 10px 12px; text-align: center;
+}
+.cpga-kpi .v { font-size: 20px; font-weight: 800; color: var(--cp-text, #16233a); font-variant-numeric: tabular-nums; }
+.cpga-kpi .l { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--cp-text-soft, #5b6b84); }
+
+.cpga-chart-wrap { margin-bottom: 6px; }
+.cpga-realtime-total {
+    font-size: 34px; font-weight: 900; color: var(--cp-accent-deep, #4752c4);
+    text-align: center; font-variant-numeric: tabular-nums;
+}
+.cpga-realtime-total small { display: block; font-size: 12px; font-weight: 700; color: var(--cp-text-soft,#5b6b84); text-transform: uppercase; letter-spacing:.05em; }
+
+.cpga-table-wrap { overflow-x: auto; }
+.cpga-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.cpga-table th {
+    text-align: left; padding: 7px 10px; font-size: 11px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: .04em;
+    color: var(--cp-text-soft, #5b6b84);
+    border-bottom: 1px solid var(--cp-border, #e3e8f0);
+    background: var(--cp-surface-2, #f7f9fc);
+}
+.cpga-table td { padding: 7px 10px; border-bottom: 1px solid var(--cp-border, #e3e8f0); overflow-wrap: anywhere; }
+.cpga-table td:not(:first-child), .cpga-table th:not(:first-child) { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.cpga-table tr:hover td { background: var(--cp-row-hover, #eff6fb); }
+.cpga-error { margin: 0; }
+
+/* --- World-map heatmap (ECharts) — shared by GA4 & Search Console --- */
+.cpga-geowrap, .gsc-geowrap { margin: 0 0 14px; }
+.cpga-geomap, .gsc-geomap {
+    width: 100%; height: 360px;
+    border: 1px solid var(--cp-border, #e3e8f0); border-radius: 10px;
+    background: var(--cp-surface, #fff); overflow: hidden;
+}
+.cpga-embed .cpga-geomap, .cpga-embed .gsc-geomap { height: 440px; }
+.cpga-geohint, .gsc-geohint {
+    margin-top: 6px; font-size: 11.5px; color: var(--cp-text-soft, #5b6b84); text-align: center;
+}
+.cpga-geomap-empty, .cpga-geomap-err {
+    display: flex; align-items: center; justify-content: center; height: 100%;
+    font-size: 13px; color: var(--cp-text-soft, #5b6b84); text-align: center; padding: 0 16px;
+}
+.cpga-geomap-err { color: var(--cp-danger, #b23b4e); }
+
+/* --- Full-width embedded mode (rendered directly in the dashboard) --- */
+.cpga-embed .cpga { font-size: 13.5px; }
+.cpga-embed .cpga-chart-wrap { height: 300px; }
+.cpga-embed .cpga-chart { height: 300px !important; }
+.cpga-embed .cpga-kpis { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+.cpga-embed .cpga-property { font-size: 15px; }
+
+/* --- AI SEO Advisor --- */
+.cpga-advisor-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
+.cpga-advisor-head h4 { margin: 0 0 4px; }
+.cpga-advisor-head p { margin: 0; color: var(--cp-text-soft, #5b6b84); font-size: 12.5px; }
+.cpga-advisor-loading { padding: 20px; color: var(--cp-text-soft, #5b6b84); }
+.cpga-advisor-meta { font-size: 11.5px; color: var(--cp-text-soft, #5b6b84); margin-bottom: 10px; }
+.cpga-advisor-md { font-size: 13.5px; line-height: 1.55; max-width: 820px; }
+.cpga-advisor-md h4 { margin: 16px 0 6px; font-size: 15px; }
+.cpga-advisor-md h5 { margin: 14px 0 5px; font-size: 13.5px; color: var(--cp-accent-deep, #4752c4); }
+.cpga-advisor-md ul { margin: 4px 0 10px; padding-left: 20px; }
+.cpga-advisor-md li { margin: 3px 0; }
+.cpga-advisor-md p { margin: 6px 0; }
+.cpga-advisor-md code { background: var(--cp-surface-2, #f7f9fc); padding: 1px 5px; border-radius: 5px; }
+.cpga-advisor-hint { margin-top: 8px; color: var(--cp-text-soft, #5b6b84); }
+
+/* --- Subtle "Powered by UnderHost" footer credit --- */
+.cpga-foot { margin-top: 12px; padding-top: 8px; border-top: 1px solid var(--cp-border, #e3e8f0); text-align: right; }
+.cpga-foot a { font-size: 11.5px; color: var(--cp-text-soft, #5b6b84); text-decoration: none; }
+.cpga-foot a:hover { color: var(--cp-accent, #5865f2); text-decoration: none; }
+.cpga-foot i { color: var(--cp-accent, #5865f2); margin-right: 3px; }
