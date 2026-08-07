@@ -1,5 +1,14 @@
 # Changelog — WHMCS Analytics
 
+All notable changes to this project are documented here. The format is based on
+[Keep a Changelog](https://keepachangelog.com/), and this project follows
+[Semantic Versioning](https://semver.org/).
+
+## [Unreleased]
+
+_Changes for the next release go here. Suggested headings: **Added**, **Changed**,
+**Fixed**, **Removed**, **Security**._
+
 ## [2.0.1] — 2026-08-08 — public GitHub release
 
 ### Added
