@@ -117,7 +117,9 @@ Two places, both live once connected:
 ## Using the dashboard
 
 - **Date range:** pick a start/end and click **Apply**.
-- **Graph:** users, sessions, and page views over time, with KPI tiles.
+- **Graph:** users, sessions, and page views over time, with KPI tiles. When WHMCS
+  business data is available it also overlays **Revenue** on a second axis and adds
+  a **Business** row of tiles (Orders, Revenue, Signups, Conversion Rate).
 - **Real Time:** active users right now, by country.
 - **Pages / Browsers / Languages / Operating Systems / Devices / Screen Resolution / Source:**
   sortable tables.
@@ -128,6 +130,17 @@ Two places, both live once connected:
   - **Explorer** (sortable, filterable), **Top Movers**, and **Opportunities**
   - Click any query for a detail drawer: weekly position/clicks/impressions/CTR charts and
     per-page/country/device breakdowns
+- **Indexing:** Search Console **URL Inspection**. Lists your top pages by impressions
+  with a per-page **index-status** badge (Indexed / Not indexed / Excluded), a box to
+  inspect **any** URL on the property, and a detail view (coverage, robots.txt, page
+  fetch, last crawl, Google vs declared canonical, mobile usability) with an
+  **Open in Search Console** link. *Requires the connected account (or service-account
+  email) to be a **full** user of the Search Console property — see Troubleshooting.*
+- **Alerts:** a prioritized "what needs attention" feed covering the last 7 and 28 days —
+  traffic drops/spikes and worsening bounce rate (GA4), search-click swings, ranking
+  drops and page-2 opportunities (from stored Search Console history), and revenue up/down
+  (WHMCS). Shows **All clear** when nothing is flagged. The traffic sensitivity threshold
+  defaults to 20%.
 - **SEO Advisor:** see below.
 
 ---
@@ -198,6 +211,17 @@ LLM model IDs change over time. Just type a current model you have access to in 
 **Search Console tab says storage isn't configured**
 Pick a backend under *Search Console history storage* and click **Test connection**. The
 Local (WHMCS database) option needs no setup.
+
+**Indexing tab returns "403" / "permission" when inspecting a URL**
+The URL Inspection API requires the connected identity to be a **full** user (owner) of
+the Search Console property — *restricted* users can't inspect. In Search Console →
+**Settings → Users and permissions**, set your Google account (OAuth) or the
+service-account email to **Full**, then try again.
+
+**Alerts tab shows only traffic items (no search/ranking alerts)**
+Ranking-drop and opportunity alerts read from stored Search Console history. Choose a
+storage backend and let the daily sync (or the **Sync** button) collect some data first;
+until then, only the GA4 traffic and WHMCS revenue alerts appear.
 
 ---
 
