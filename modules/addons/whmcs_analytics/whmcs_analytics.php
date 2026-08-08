@@ -26,7 +26,7 @@ function whmcs_analytics_config()
     return [
         'name'        => 'WHMCS Analytics',
         'description' => 'Google Analytics 4 + Search Console on your WHMCS admin dashboard: live GA4 reports, a world-map heatmap, and Search Console keyword tracking with pluggable history storage (local DB, external MySQL, or libSQL/Turso).',
-        'version'     => '2.0.1',
+        'version'     => '2.0.2',
         'author'      => 'UnderHost',
         'language'    => 'english',
         'fields'      => [
@@ -518,7 +518,7 @@ function _cpga_dashboard_html($systemUrl)
     $assets = htmlspecialchars($systemUrl . '/modules/addons/whmcs_analytics/assets');
     $ajax   = htmlspecialchars($systemUrl . '/modules/addons/whmcs_analytics/ajax.php');
     $token  = htmlspecialchars(generate_token('plain'));
-    $ver    = '2.0.1';
+    $ver    = '2.0.2';
 
     $tabs = [
         'graph' => 'Graph', 'realtime' => 'Real Time', 'pages' => 'Pages',

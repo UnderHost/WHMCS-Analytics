@@ -210,9 +210,11 @@ class AiAdvisor
             . 'actionable recommendations grounded in the actual numbers, queries and pages provided — '
             . 'cite them. Avoid generic advice and filler. Focus on realistic wins for a hosting brand '
             . '(offshore/anti-DMCA/dedicated/VPS/shared hosting keywords, landing pages, CTR and content gaps). '
-            . 'Respond in concise GitHub-flavored Markdown using these sections, each 2–5 bullet points: '
+            . 'Respond in clear GitHub-flavored Markdown using these exact section headings, each with '
+            . '3–6 specific bullet points that cite real queries, pages and numbers from the data: '
             . '"## Quick wins", "## Keyword opportunities", "## Content ideas", "## CTR & technical", "## Watch-outs". '
-            . 'Keep the whole response under ~500 words.';
+            . 'Be thorough but skimmable — roughly 400–800 words. Start directly with the first "## " heading; '
+            . 'no preamble and no closing summary.';
 
         $user = "Here is the site's analytics snapshot as JSON. Base every recommendation on it.\n\n"
             . json_encode($snapshot, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
@@ -244,7 +246,7 @@ class AiAdvisor
                 ['role' => 'user', 'content' => $messages['user']],
             ],
             'temperature' => 0.4,
-            'max_tokens' => 1300,
+            'max_tokens' => 2500,
         ];
         $data = self::http($endpoint, [
             'Content-Type: application/json',
@@ -259,7 +261,7 @@ class AiAdvisor
     {
         $body = [
             'model' => self::model(),
-            'max_tokens' => 1300,
+            'max_tokens' => 2500,
             'temperature' => 0.4,
             'system' => $messages['system'],
             'messages' => [['role' => 'user', 'content' => $messages['user']]],
@@ -287,7 +289,9 @@ class AiAdvisor
         $body = [
             'system_instruction' => ['parts' => [['text' => $messages['system']]]],
             'contents' => [['role' => 'user', 'parts' => [['text' => $messages['user']]]]],
-            'generationConfig' => ['temperature' => 0.4, 'maxOutputTokens' => 1300],
+            // Gemini "flash" models spend output tokens on internal thinking, so
+            // give a generous ceiling — otherwise the visible answer gets cut off.
+            'generationConfig' => ['temperature' => 0.4, 'maxOutputTokens' => 8192],
         ];
         $data = self::http($url, [
             'Content-Type: application/json',

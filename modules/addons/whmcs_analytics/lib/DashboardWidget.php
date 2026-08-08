@@ -107,16 +107,16 @@ class WhmcsAnalyticsWidget extends AbstractWidget
     </div>
     <div class="cpga-foot"><a href="https://underhost.com" target="_blank" rel="noopener"><i class="fas fa-bolt"></i> Powered by <strong>UnderHost</strong></a></div>
 </div>
-<link rel="stylesheet" href="<?= htmlspecialchars($assets) ?>/ga.css?v=2.0.1">
-<link rel="stylesheet" href="<?= htmlspecialchars($assets) ?>/gsc.css?v=2.0.1">
+<link rel="stylesheet" href="<?= htmlspecialchars($assets) ?>/ga.css?v=2.0.2">
+<link rel="stylesheet" href="<?= htmlspecialchars($assets) ?>/gsc.css?v=2.0.2">
 <script>
 window.cpgaChartSrc = "<?= htmlspecialchars($assets) ?>/chart.umd.min.js";
 window.cpgaEChartsSrc = "<?= htmlspecialchars($assets) ?>/echarts.min.js";
-window.cpgaWorldGeoUrl = "<?= htmlspecialchars($assets) ?>/world.geo.json?v=2.0.1";
+window.cpgaWorldGeoUrl = "<?= htmlspecialchars($assets) ?>/world.geo.json?v=2.0.2";
 </script>
-<script src="<?= htmlspecialchars($assets) ?>/geomap.js?v=2.0.1"></script>
-<script src="<?= htmlspecialchars($assets) ?>/gsc.js?v=2.0.1"></script>
-<script src="<?= htmlspecialchars($assets) ?>/ga.js?v=2.0.1"></script>
+<script src="<?= htmlspecialchars($assets) ?>/geomap.js?v=2.0.2"></script>
+<script src="<?= htmlspecialchars($assets) ?>/gsc.js?v=2.0.2"></script>
+<script src="<?= htmlspecialchars($assets) ?>/ga.js?v=2.0.2"></script>
         <?php
         return ob_get_clean();
     }

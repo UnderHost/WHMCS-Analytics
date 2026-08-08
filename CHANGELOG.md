@@ -9,6 +9,22 @@ All notable changes to this project are documented here. The format is based on
 _Changes for the next release go here. Suggested headings: **Added**, **Changed**,
 **Fixed**, **Removed**, **Security**._
 
+## [2.0.2] — 2026-08-09
+
+### Fixed
+
+- **AI SEO Advisor was cut off mid-answer.** The output-token cap was too low —
+  Gemini "flash" models spend part of the budget on internal thinking, which
+  truncated the visible reply (and left broken Markdown). Raised the ceilings:
+  Gemini `maxOutputTokens` 1300 → 8192, and OpenAI/Anthropic/DeepSeek
+  `max_tokens` 1300 → 2500.
+
+### Changed
+
+- **Richer advisor output.** The prompt now asks for 3–6 specific bullets per
+  section (citing real queries/pages/numbers), ~400–800 words, starting directly
+  at the first heading — so recommendations are fuller and more concrete.
+
 ## [2.0.1] — 2026-08-08 — public GitHub release
 
 ### Added
