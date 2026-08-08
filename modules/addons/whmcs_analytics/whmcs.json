@@ -1,0 +1,32 @@
+{
+    "schema": "1.0",
+    "type": "whmcs-addons",
+    "name": "whmcs_analytics",
+    "license": "MIT",
+    "category": "addon",
+    "description": {
+        "name": "WHMCS Analytics",
+        "tagline": "Google Analytics 4 & Search Console, right on your WHMCS admin dashboard.",
+        "long": "WHMCS Analytics brings your Google Analytics 4 reports and Google Search Console SEO data into the WHMCS admin area with no theme edits required. Get live GA4 metrics with a world-map heatmap of visitors by country, full Search Console keyword tracking (weekly positions, Top Movers, and Opportunities), and an optional AI SEO Advisor that turns your data into prioritized recommendations. Search Console history is stored in your WHMCS database by default, or in an external MySQL or libSQL/Turso backend you choose in the settings.",
+        "features": [
+            "Live Google Analytics 4 dashboard widget plus a dedicated addon page",
+            "World-map heatmap of visitors and search impressions by country",
+            "Search Console keyword tracking: weekly positions, Top Movers, Opportunities",
+            "Pluggable history storage: local WHMCS DB, external MySQL, or libSQL / Turso",
+            "AI SEO Advisor (bring your own OpenAI, Claude, or DeepSeek API key)"
+        ]
+    },
+    "logo": {
+        "filename": "logo.png"
+    },
+    "support": {
+        "homepage": "https://underhost.com/",
+        "docs_url": "https://underhost.com/"
+    },
+    "authors": [
+        {
+            "name": "UnderHost",
+            "homepage": "https://underhost.com/"
+        }
+    ]
+}
