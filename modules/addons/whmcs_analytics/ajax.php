@@ -40,7 +40,7 @@ $mod = Capsule::table('tbladdonmodules')
 $clientId     = trim($mod['client_id'] ?? '');
 $clientSecret = trim($mod['client_secret'] ?? '');
 
-if (!$clientId || !$clientSecret) {
+if (Google::authType() !== 'service_account' && (!$clientId || !$clientSecret)) {
     echo json_encode(['error' => 'Module not configured (missing OAuth credentials).']);
     exit;
 }

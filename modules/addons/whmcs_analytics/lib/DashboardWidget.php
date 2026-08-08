@@ -36,10 +36,15 @@ class WhmcsAnalyticsWidget extends AbstractWidget
             ->where('module', 'whmcs_analytics')
             ->pluck('value', 'setting');
 
-        $configured = !empty($mod['client_id']) && !empty($mod['client_secret']);
-        $connected  = false;
-        $property   = '';
-        if ($configured && Capsule::schema()->hasTable(\WhmcsAnalytics\Google::TABLE)) {
+        $hasTable = Capsule::schema()->hasTable(\WhmcsAnalytics\Google::TABLE);
+        if ($hasTable && \WhmcsAnalytics\Google::authType() === 'service_account') {
+            $configured = \WhmcsAnalytics\Google::serviceAccountKey() !== null;
+        } else {
+            $configured = !empty($mod['client_id']) && !empty($mod['client_secret']);
+        }
+        $connected = false;
+        $property  = '';
+        if ($hasTable && $configured) {
             $connected = \WhmcsAnalytics\Google::isConnected();
             $property  = \WhmcsAnalytics\Google::get('property_name', '');
         }
@@ -107,16 +112,16 @@ class WhmcsAnalyticsWidget extends AbstractWidget
     </div>
     <div class="cpga-foot"><a href="https://underhost.com" target="_blank" rel="noopener"><i class="fas fa-bolt"></i> Powered by <strong>UnderHost</strong></a></div>
 </div>
-<link rel="stylesheet" href="<?= htmlspecialchars($assets) ?>/ga.css?v=2.0.2">
-<link rel="stylesheet" href="<?= htmlspecialchars($assets) ?>/gsc.css?v=2.0.2">
+<link rel="stylesheet" href="<?= htmlspecialchars($assets) ?>/ga.css?v=2.1.0">
+<link rel="stylesheet" href="<?= htmlspecialchars($assets) ?>/gsc.css?v=2.1.0">
 <script>
 window.cpgaChartSrc = "<?= htmlspecialchars($assets) ?>/chart.umd.min.js";
 window.cpgaEChartsSrc = "<?= htmlspecialchars($assets) ?>/echarts.min.js";
-window.cpgaWorldGeoUrl = "<?= htmlspecialchars($assets) ?>/world.geo.json?v=2.0.2";
+window.cpgaWorldGeoUrl = "<?= htmlspecialchars($assets) ?>/world.geo.json?v=2.1.0";
 </script>
-<script src="<?= htmlspecialchars($assets) ?>/geomap.js?v=2.0.2"></script>
-<script src="<?= htmlspecialchars($assets) ?>/gsc.js?v=2.0.2"></script>
-<script src="<?= htmlspecialchars($assets) ?>/ga.js?v=2.0.2"></script>
+<script src="<?= htmlspecialchars($assets) ?>/geomap.js?v=2.1.0"></script>
+<script src="<?= htmlspecialchars($assets) ?>/gsc.js?v=2.1.0"></script>
+<script src="<?= htmlspecialchars($assets) ?>/ga.js?v=2.1.0"></script>
         <?php
         return ob_get_clean();
     }

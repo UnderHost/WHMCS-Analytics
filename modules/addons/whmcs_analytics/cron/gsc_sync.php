@@ -33,7 +33,7 @@ $mod = Capsule::table('tbladdonmodules')
 $clientId     = trim($mod['client_id'] ?? '');
 $clientSecret = trim($mod['client_secret'] ?? '');
 
-if (!$clientId || !$clientSecret) {
+if (\WhmcsAnalytics\Google::authType() !== 'service_account' && (!$clientId || !$clientSecret)) {
     fwrite(STDERR, "Module not configured (missing OAuth credentials).\n");
     exit(1);
 }

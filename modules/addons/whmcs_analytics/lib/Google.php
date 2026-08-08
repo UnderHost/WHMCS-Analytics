@@ -44,7 +44,7 @@ class Google
 
     /* ---------------- settings storage (sensitive values encrypted) ------- */
 
-    protected static $secretKeys = ['client_secret', 'refresh_token', 'access_token'];
+    protected static $secretKeys = ['client_secret', 'refresh_token', 'access_token', 'sa_key', 'sa_access_token'];
 
     public static function set($key, $value)
     {
@@ -100,8 +100,17 @@ class Google
         return !empty($clientId) && !empty($clientSecret);
     }
 
+    /** 'oauth' (default) or 'service_account'. */
+    public static function authType()
+    {
+        return self::get('auth_type', 'oauth') === 'service_account' ? 'service_account' : 'oauth';
+    }
+
     public static function isConnected()
     {
+        if (self::authType() === 'service_account') {
+            return self::serviceAccountKey() !== null;
+        }
         return !empty(self::get('refresh_token'));
     }
 
@@ -139,9 +148,98 @@ class Google
         return $res;
     }
 
+    /* ---------------- Service account (JWT bearer) ---------------------- */
+
+    /** Decoded service-account JSON key, or null if not configured/invalid. */
+    public static function serviceAccountKey()
+    {
+        $raw = self::get('sa_key');
+        if (!$raw) {
+            return null;
+        }
+        $j = json_decode($raw, true);
+        if (!is_array($j) || empty($j['private_key']) || empty($j['client_email'])) {
+            return null;
+        }
+        return $j;
+    }
+
+    /** The service account's email (the address you share GA4 / Search Console with). */
+    public static function serviceAccountEmail()
+    {
+        $k = self::serviceAccountKey();
+        return $k ? ($k['client_email'] ?? '') : '';
+    }
+
+    /** Validate + store a service-account JSON key and switch to that auth type. */
+    public static function connectServiceAccount($json)
+    {
+        $j = json_decode($json, true);
+        if (!is_array($j) || empty($j['private_key']) || empty($j['client_email'])) {
+            throw new \RuntimeException('That is not a valid service-account JSON key (missing "private_key"/"client_email").');
+        }
+        self::set('sa_key', $json);
+        self::set('auth_type', 'service_account');
+        self::forget('sa_access_token');
+        self::forget('sa_access_expires');
+        self::saAccessToken(); // validate by minting a token now
+        return $j['client_email'];
+    }
+
+    protected static function b64url($data)
+    {
+        return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+    }
+
+    /** Mint (and cache) an access token from the service-account key via a signed JWT. */
+    protected static function saAccessToken()
+    {
+        $token   = self::get('sa_access_token');
+        $expires = (int) self::get('sa_access_expires', 0);
+        if ($token && $expires > time() + 30) {
+            return $token;
+        }
+        $key = self::serviceAccountKey();
+        if (!$key) {
+            throw new \RuntimeException('No service-account key configured. Add one in the module settings.');
+        }
+        if (!function_exists('openssl_sign')) {
+            throw new \RuntimeException('PHP OpenSSL extension is required for service-account authentication.');
+        }
+        $now      = time();
+        $tokenUri = $key['token_uri'] ?? self::OAUTH_TOKEN;
+        $header   = self::b64url(json_encode(['alg' => 'RS256', 'typ' => 'JWT']));
+        $claims   = self::b64url(json_encode([
+            'iss'   => $key['client_email'],
+            'scope' => self::SCOPE,
+            'aud'   => $tokenUri,
+            'iat'   => $now,
+            'exp'   => $now + 3600,
+        ]));
+        $signingInput = $header . '.' . $claims;
+        $signature    = '';
+        if (!openssl_sign($signingInput, $signature, $key['private_key'], OPENSSL_ALGO_SHA256)) {
+            throw new \RuntimeException('Failed to sign the service-account JWT — check the private key in the JSON.');
+        }
+        $jwt = $signingInput . '.' . self::b64url($signature);
+        $res = self::httpPost($tokenUri, [
+            'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+            'assertion'  => $jwt,
+        ]);
+        if (empty($res['access_token'])) {
+            throw new \RuntimeException('Service-account token request failed: ' . self::errText($res));
+        }
+        self::set('sa_access_token', $res['access_token']);
+        self::set('sa_access_expires', (string) ($now + (int) ($res['expires_in'] ?? 3600)));
+        return $res['access_token'];
+    }
+
     /** Return a valid access token, refreshing if needed. */
     public static function accessToken($clientId, $clientSecret)
     {
+        if (self::authType() === 'service_account') {
+            return self::saAccessToken();
+        }
         $token   = self::get('access_token');
         $expires = (int) self::get('access_expires', 0);
         if ($token && $expires > time() + 30) {
@@ -167,12 +265,13 @@ class Google
 
     public static function disconnect()
     {
-        self::forget('refresh_token');
-        self::forget('access_token');
-        self::forget('access_expires');
-        self::forget('property_id');
-        self::forget('property_name');
-        self::forget('sc_site');
+        foreach ([
+            'refresh_token', 'access_token', 'access_expires',
+            'sa_key', 'sa_access_token', 'sa_access_expires', 'auth_type',
+            'property_id', 'property_name', 'sc_site',
+        ] as $k) {
+            self::forget($k);
+        }
     }
 
     /* ---------------- Search Console ------------------------------------ */

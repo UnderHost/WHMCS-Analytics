@@ -9,6 +9,24 @@ All notable changes to this project are documented here. The format is based on
 _Changes for the next release go here. Suggested headings: **Added**, **Changed**,
 **Fixed**, **Removed**, **Security**._
 
+## [2.1.0] — 2026-08-09
+
+### Added
+
+- **Service Account authentication** — a second connection method alongside OAuth.
+  Paste a Google service-account JSON key and share your GA4 property + Search
+  Console site with the service-account email. **No OAuth consent screen, no app
+  verification, and the token never expires** (so the daily Search Console sync
+  won't break after 7 days like an unpublished OAuth app). Signs a JWT (RS256)
+  and exchanges it for an access token — no extra PHP dependencies. Choose the
+  method under **Settings & connection**; both paths feed the same dashboard.
+
+### Changed
+
+- The OAuth Client ID/Secret are no longer required when using Service Account
+  auth (relaxed the credential gates in the AJAX endpoint, widget, cron, and
+  daily hook). The setup guide now documents both connection methods.
+
 ## [2.0.2] — 2026-08-09
 
 ### Fixed

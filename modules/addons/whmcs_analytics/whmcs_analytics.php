@@ -26,7 +26,7 @@ function whmcs_analytics_config()
     return [
         'name'        => 'WHMCS Analytics',
         'description' => 'Google Analytics 4 + Search Console on your WHMCS admin dashboard: live GA4 reports, a world-map heatmap, and Search Console keyword tracking with pluggable history storage (local DB, external MySQL, or libSQL/Turso).',
-        'version'     => '2.0.2',
+        'version'     => '2.1.0',
         'author'      => 'UnderHost',
         'language'    => 'english',
         'fields'      => [
@@ -120,6 +120,9 @@ function whmcs_analytics_output($vars)
             if ($action === 'disconnect') {
                 Google::disconnect();
                 $notice = 'Disconnected from Google.';
+            } elseif ($action === 'connect_sa') {
+                $email = Google::connectServiceAccount((string) ($_POST['sa_key'] ?? ''));
+                $notice = 'Connected via service account (' . $email . '). Now choose your GA4 property below.';
             } elseif ($action === 'save_property') {
                 $pid = preg_replace('/[^0-9]/', '', $_POST['property_id'] ?? '');
                 Google::set('property_id', $pid);
@@ -212,79 +215,109 @@ function whmcs_analytics_output($vars)
         }
     }
 
-    if (!Google::isConfigured($clientId, $clientSecret)) {
-        echo '<div class="alert alert-warning"><strong>Set up required.</strong> Enter your Google OAuth <em>Client ID</em> and <em>Client Secret</em> in this module\'s configuration (Configuration → Addon Modules → WHMCS Analytics → Configure), then return here.</div>';
-    }
+    $oauthConfigured = Google::isConfigured($clientId, $clientSecret);
+    $connected       = Google::isConnected();
+    $authType        = Google::authType();
 
     echo '<div class="panel panel-default"><div class="panel-heading"><strong>Google connection</strong></div><div class="panel-body">';
-    echo '<div style="background:var(--cp-surface-2,#f7f9fc);border:1px solid #e3e8f0;border-radius:8px;padding:12px 14px;margin-bottom:14px">';
-    echo '<div style="font-weight:700;margin-bottom:4px"><i class="fas fa-link"></i> Your Authorized redirect URI</div>';
-    echo '<p style="margin:0 0 8px">In the Google Cloud Console, when you <b>Create OAuth client ID</b> (type <b>Web application</b>): paste the URL below into <b>Authorized redirect URIs</b> (click &ldquo;+ Add URI&rdquo; first). You can leave <b>Authorized JavaScript origins</b> empty.</p>';
-    echo '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">';
-    echo '<input type="text" readonly id="cpgaRedirectUri" value="' . htmlspecialchars($callbackUri) . '" onclick="this.select()" style="flex:1;min-width:320px;font-family:monospace;font-size:12px;padding:7px 9px;border:1px solid #d5deea;border-radius:6px;background:#fff">';
-    echo '<button type="button" class="btn btn-default btn-sm cpga-copy-uri"><i class="fas fa-copy"></i> Copy</button>';
-    echo '</div>';
-    echo '<p style="margin:8px 0 0;font-size:11.5px;color:var(--cp-text-soft,#5b6b84)">New to this? Follow the <a href="' . htmlspecialchars($moduleLink . '&view=guide') . '">Setup guide</a> tab step by step.</p>';
-    echo '</div>';
-    echo '<script>(function(){var b=document.querySelector(".cpga-copy-uri");if(b){b.addEventListener("click",function(){var i=document.getElementById("cpgaRedirectUri");i.focus();i.select();try{if(navigator.clipboard){navigator.clipboard.writeText(i.value);}else{document.execCommand("copy");}}catch(e){}b.textContent="Copied";});}})();</script>';
 
-    if (Google::isConfigured($clientId, $clientSecret)) {
-        if (Google::isConnected()) {
-            echo '<p><span class="label label-success">Connected</span></p>';
-            echo '<form method="post" style="display:inline"><input type="hidden" name="cpga_action" value="disconnect"><button class="btn btn-default btn-sm" type="submit">Disconnect</button></form>';
-
-            // Property selector
-            echo '<hr><h4>GA4 Property</h4>';
-            try {
-                $props   = Google::listProperties($clientId, $clientSecret);
-                $current = Google::get('property_id');
-                if (!$props) {
-                    echo '<div class="alert alert-warning">No GA4 properties found for the connected Google account. Make sure the account has access to a GA4 property.</div>';
-                } else {
-                    echo '<form method="post" class="form-inline"><input type="hidden" name="cpga_action" value="save_property">';
-                    echo '<select name="property_id" class="form-control" onchange="this.form.property_name.value=this.options[this.selectedIndex].text">';
-                    foreach ($props as $p) {
-                        $sel = ($p['id'] === $current) ? ' selected' : '';
-                        echo '<option value="' . htmlspecialchars($p['id']) . '"' . $sel . '>' . htmlspecialchars($p['name']) . '</option>';
-                    }
-                    echo '</select> <input type="hidden" name="property_name" value="">';
-                    echo ' <button class="btn btn-primary" type="submit">Save property</button></form>';
-                    if ($current) {
-                        echo '<p class="text-muted" style="margin-top:8px">Active property: <code>' . htmlspecialchars(Google::get('property_name', $current)) . '</code></p>';
-                    }
-                }
-            } catch (\Throwable $e) {
-                echo '<div class="alert alert-danger">Could not list properties: ' . htmlspecialchars($e->getMessage()) . '</div>';
-            }
-
-            // Search Console site selector (powers the widget's "Search Console" tab)
-            echo '<hr><h4>Search Console site <small class="text-muted">(optional — for the Keywords/Search Console tab)</small></h4>';
-            try {
-                $sites   = Google::listSites($clientId, $clientSecret);
-                $curSite = Google::get('sc_site');
-                if (!$sites) {
-                    echo '<div class="alert alert-warning">No Search Console sites found for this Google account. Add and verify a site in Google Search Console, then reload.</div>';
-                } else {
-                    echo '<form method="post" class="form-inline"><input type="hidden" name="cpga_action" value="save_sc_site">';
-                    echo '<select name="sc_site" class="form-control">';
-                    echo '<option value="">— None —</option>';
-                    foreach ($sites as $s) {
-                        $sel = ($s['url'] === $curSite) ? ' selected' : '';
-                        echo '<option value="' . htmlspecialchars($s['url']) . '"' . $sel . '>' . htmlspecialchars($s['url']) . '</option>';
-                    }
-                    echo '</select> <button class="btn btn-primary" type="submit">Save site</button></form>';
-                    if ($curSite) {
-                        echo '<p class="text-muted" style="margin-top:8px">Active site: <code>' . htmlspecialchars($curSite) . '</code></p>';
-                    }
-                }
-            } catch (\Throwable $e) {
-                echo '<div class="alert alert-warning">Could not list Search Console sites: ' . htmlspecialchars($e->getMessage())
-                    . ' (If you connected before Search Console support was added, click Disconnect and reconnect to grant the extra permission.)</div>';
-            }
+    if ($connected) {
+        // ---- Connected (either OAuth or service account): status + selectors ----
+        if ($authType === 'service_account') {
+            echo '<p><span class="label label-success">Connected — service account</span> <code style="font-size:11.5px">' . htmlspecialchars(Google::serviceAccountEmail()) . '</code></p>';
         } else {
+            echo '<p><span class="label label-success">Connected — OAuth</span></p>';
+        }
+        echo '<form method="post" style="display:inline"><input type="hidden" name="cpga_action" value="disconnect"><button class="btn btn-default btn-sm" type="submit">Disconnect</button></form>';
+
+        // GA4 property selector
+        echo '<hr><h4>GA4 Property</h4>';
+        try {
+            $props   = Google::listProperties($clientId, $clientSecret);
+            $current = Google::get('property_id');
+            if (!$props) {
+                echo '<div class="alert alert-warning">No GA4 properties found for the connection. '
+                    . ($authType === 'service_account'
+                        ? 'Add the service-account email as a <b>Viewer</b> on your GA4 property (Admin → Property Access Management), then reload.'
+                        : 'Make sure the account has access to a GA4 property.') . '</div>';
+            } else {
+                echo '<form method="post" class="form-inline"><input type="hidden" name="cpga_action" value="save_property">';
+                echo '<select name="property_id" class="form-control" onchange="this.form.property_name.value=this.options[this.selectedIndex].text">';
+                foreach ($props as $p) {
+                    $sel = ($p['id'] === $current) ? ' selected' : '';
+                    echo '<option value="' . htmlspecialchars($p['id']) . '"' . $sel . '>' . htmlspecialchars($p['name']) . '</option>';
+                }
+                echo '</select> <input type="hidden" name="property_name" value="">';
+                echo ' <button class="btn btn-primary" type="submit">Save property</button></form>';
+                if ($current) {
+                    echo '<p class="text-muted" style="margin-top:8px">Active property: <code>' . htmlspecialchars(Google::get('property_name', $current)) . '</code></p>';
+                }
+            }
+        } catch (\Throwable $e) {
+            echo '<div class="alert alert-danger">Could not list properties: ' . htmlspecialchars($e->getMessage()) . '</div>';
+        }
+
+        // Search Console site selector
+        echo '<hr><h4>Search Console site <small class="text-muted">(optional — for the Keywords/Search Console tab)</small></h4>';
+        try {
+            $sites   = Google::listSites($clientId, $clientSecret);
+            $curSite = Google::get('sc_site');
+            if (!$sites) {
+                echo '<div class="alert alert-warning">No Search Console sites found. '
+                    . ($authType === 'service_account'
+                        ? 'Add the service-account email as a user on your site in Search Console (Settings → Users and permissions), then reload.'
+                        : 'Add and verify a site in Google Search Console, then reload.') . '</div>';
+            } else {
+                echo '<form method="post" class="form-inline"><input type="hidden" name="cpga_action" value="save_sc_site">';
+                echo '<select name="sc_site" class="form-control"><option value="">— None —</option>';
+                foreach ($sites as $s) {
+                    $sel = ($s['url'] === $curSite) ? ' selected' : '';
+                    echo '<option value="' . htmlspecialchars($s['url']) . '"' . $sel . '>' . htmlspecialchars($s['url']) . '</option>';
+                }
+                echo '</select> <button class="btn btn-primary" type="submit">Save site</button></form>';
+                if ($curSite) {
+                    echo '<p class="text-muted" style="margin-top:8px">Active site: <code>' . htmlspecialchars($curSite) . '</code></p>';
+                }
+            }
+        } catch (\Throwable $e) {
+            echo '<div class="alert alert-warning">Could not list Search Console sites: ' . htmlspecialchars($e->getMessage()) . '</div>';
+        }
+    } else {
+        // ---- Not connected: choose a connection method ----
+        $method = in_array($_GET['method'] ?? '', ['oauth', 'sa'], true) ? $_GET['method'] : 'oauth';
+        echo '<ul class="nav nav-pills" style="margin-bottom:14px">'
+            . '<li' . ($method === 'oauth' ? ' class="active"' : '') . '><a href="' . htmlspecialchars($moduleLink . '&view=settings&method=oauth') . '"><i class="fab fa-google"></i> OAuth (Connect with Google)</a></li> '
+            . '<li' . ($method === 'sa' ? ' class="active"' : '') . '><a href="' . htmlspecialchars($moduleLink . '&view=settings&method=sa') . '"><i class="fas fa-key"></i> Service account <small>(no consent screen)</small></a></li>'
+            . '</ul>';
+
+        if ($method === 'sa') {
+            echo '<p class="text-muted">Recommended for a server: <b>no OAuth consent screen, no app verification, and tokens don\'t expire</b>. '
+                . 'You create a Google <b>service account</b>, download its <b>JSON key</b>, and share your GA4 property + Search Console site with the service-account email.</p>';
+            echo '<div class="alert alert-info" style="font-size:12.5px"><b>One-time setup:</b><ol style="margin:6px 0 0;padding-left:18px">'
+                . '<li>In the <a href="https://console.cloud.google.com/apis/library" target="_blank" rel="noopener">API Library</a>, enable the <b>Google Analytics Data API</b> and <b>Search Console API</b>.</li>'
+                . '<li>In <a href="https://console.cloud.google.com/iam-admin/serviceaccounts" target="_blank" rel="noopener">IAM &amp; Admin → Service Accounts</a>, create a service account, then <b>Keys → Add key → Create new key → JSON</b>.</li>'
+                . '<li>In GA4: <b>Admin → Property Access Management</b> → add the service-account email as <b>Viewer</b>.</li>'
+                . '<li>In Search Console: <b>Settings → Users and permissions</b> → add the same email.</li>'
+                . '<li>Paste the JSON key below and connect.</li></ol></div>';
+            echo '<form method="post"><input type="hidden" name="cpga_action" value="connect_sa">';
+            echo '<textarea name="sa_key" class="form-control" rows="7" placeholder="Paste the entire service-account JSON key here…" style="font-family:monospace;font-size:11.5px" required></textarea>';
+            echo '<div style="margin-top:10px"><button class="btn btn-primary" type="submit"><i class="fas fa-key"></i> Connect with service account</button></div>';
+            echo '</form>';
+        } elseif (!$oauthConfigured) {
+            echo '<div class="alert alert-warning"><strong>Set up required.</strong> Enter your Google OAuth <em>Client ID</em> and <em>Client Secret</em> in <b>Configure</b> (Configuration → Addon Modules → WHMCS Analytics → Configure), then reload — or use the <b>Service account</b> tab above, which needs no OAuth client.</div>';
+        } else {
+            echo '<div style="background:var(--cp-surface-2,#f7f9fc);border:1px solid #e3e8f0;border-radius:8px;padding:12px 14px;margin-bottom:14px">';
+            echo '<div style="font-weight:700;margin-bottom:4px"><i class="fas fa-link"></i> Your Authorized redirect URI</div>';
+            echo '<p style="margin:0 0 8px">When you <b>Create OAuth client ID</b> (type <b>Web application</b>) in Google Cloud: paste the URL below into <b>Authorized redirect URIs</b>. Leave <b>Authorized JavaScript origins</b> empty.</p>';
+            echo '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">';
+            echo '<input type="text" readonly id="cpgaRedirectUri" value="' . htmlspecialchars($callbackUri) . '" onclick="this.select()" style="flex:1;min-width:320px;font-family:monospace;font-size:12px;padding:7px 9px;border:1px solid #d5deea;border-radius:6px;background:#fff">';
+            echo '<button type="button" class="btn btn-default btn-sm cpga-copy-uri"><i class="fas fa-copy"></i> Copy</button>';
+            echo '</div></div>';
+            echo '<script>(function(){var b=document.querySelector(".cpga-copy-uri");if(b){b.addEventListener("click",function(){var i=document.getElementById("cpgaRedirectUri");i.focus();i.select();try{if(navigator.clipboard){navigator.clipboard.writeText(i.value);}else{document.execCommand("copy");}}catch(e){}b.textContent="Copied";});}})();</script>';
             $url = Google::authUrl($clientId, $callbackUri, _cpga_state());
             echo '<a class="btn btn-primary" href="' . htmlspecialchars($url) . '"><i class="fab fa-google"></i> Connect with Google</a>';
         }
+        echo '<p style="margin:12px 0 0;font-size:11.5px;color:var(--cp-text-soft,#5b6b84)">New to this? Follow the <a href="' . htmlspecialchars($moduleLink . '&view=guide') . '">Setup guide</a> tab.</p>';
     }
 
     echo '</div></div>';
@@ -479,7 +512,10 @@ function _cpga_guide_html($callbackUri, $systemUrl)
 
     $h .= $step(3, 'Connect Google &amp; pick your data',
         'Open the <strong>Settings &amp; connection</strong> tab here, click <strong>Connect with Google</strong>, then choose your '
-        . '<strong>GA4 property</strong> and (optionally) your <strong>Search Console site</strong>.');
+        . '<strong>GA4 property</strong> and (optionally) your <strong>Search Console site</strong>.<br>'
+        . '<strong>Prefer no OAuth?</strong> On that tab switch to the <strong>Service account</strong> method — no consent screen, '
+        . 'no app to publish, and the connection never expires. You paste a service-account JSON key and share your GA4 property + '
+        . 'Search Console site with the service-account email (steps are shown on-screen). Steps 1–2 above are not needed for that path.');
 
     $h .= $step(4, 'Choose where history is stored',
         'On the same tab, pick a <strong>history storage</strong> backend: <strong>Local WHMCS database</strong> (default, zero setup), '
@@ -518,7 +554,7 @@ function _cpga_dashboard_html($systemUrl)
     $assets = htmlspecialchars($systemUrl . '/modules/addons/whmcs_analytics/assets');
     $ajax   = htmlspecialchars($systemUrl . '/modules/addons/whmcs_analytics/ajax.php');
     $token  = htmlspecialchars(generate_token('plain'));
-    $ver    = '2.0.2';
+    $ver    = '2.1.0';
 
     $tabs = [
         'graph' => 'Graph', 'realtime' => 'Real Time', 'pages' => 'Pages',

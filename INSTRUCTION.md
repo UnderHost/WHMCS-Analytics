@@ -49,6 +49,26 @@ you distribute the app to many outside users.
 
 ---
 
+## Alternative to Steps 1–3 — Service Account (recommended for servers)
+
+If you'd rather skip the OAuth consent screen, verification, and the 7-day token expiry,
+connect with a **service account** instead. There's no Client ID/Secret and no "Connect
+with Google" redirect — the token never expires, so the daily sync can't break.
+
+1. In the **[API Library](https://console.cloud.google.com/apis/library)**, enable the
+   **Google Analytics Data API** and **Search Console API**.
+2. In **[IAM & Admin → Service Accounts](https://console.cloud.google.com/iam-admin/serviceaccounts)**,
+   create a service account, then **Keys → Add key → Create new key → JSON** and download it.
+3. Give the service account read access to your data:
+   - **GA4:** Admin → **Property Access Management** → add the service-account email as **Viewer**.
+   - **Search Console:** Settings → **Users and permissions** → add the same email.
+4. In WHMCS: **Addons → WHMCS Analytics → Settings & connection**, switch to the
+   **Service account** method, paste the JSON key, and click **Connect with service account**.
+5. Choose your **GA4 property** and **Search Console site** (Step 3 below), then continue to
+   Step 4. You can skip Steps 1–2 entirely with this method.
+
+---
+
 ## Step 2 — Enter your Client ID & Secret
 
 In WHMCS: **Configuration → System Settings → Addon Modules → WHMCS Analytics → Configure**.

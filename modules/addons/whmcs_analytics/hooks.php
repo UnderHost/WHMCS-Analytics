@@ -34,7 +34,7 @@ add_hook('DailyCronJob', 1, function ($vars) {
             ->pluck('value', 'setting');
         $clientId     = trim($mod['client_id'] ?? '');
         $clientSecret = trim($mod['client_secret'] ?? '');
-        if (!$clientId || !$clientSecret) {
+        if (\WhmcsAnalytics\Google::authType() !== 'service_account' && (!$clientId || !$clientSecret)) {
             return;
         }
 
