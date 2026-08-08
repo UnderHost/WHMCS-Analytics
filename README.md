@@ -79,7 +79,7 @@ Full details: [INSTALL.md](INSTALL.md) · Complete walkthrough: [INSTRUCTION.md]
 
 ## Screenshots
 
-> _Add screenshots here: the GA4 graph, the Countries world-map, the Search Console Top Movers, and the SEO Advisor output._
+> _coming soon_
 
 ---
 
