@@ -311,18 +311,23 @@
         var s = d.summary || {}, host = this.el.body.querySelector('.gsc-explorer .gsc-cards');
         if (!host) { return; }
         function card(v, l, cls) { return '<div class="gsc-card ' + (cls || '') + '"><div class="v">' + v + '</div><div class="l">' + l + '</div></div>'; }
-        host.innerHTML =
+        // Two rows: movement stats on top, position distribution below.
+        var movement =
             card(num(s.total_cur), 'Tracked') +
             card(num(s.improved), 'Improved', 'up') +
             card(num(s.declined), 'Declined', 'down') +
             card(num(s.unchanged), 'Unchanged', 'flat') +
             card(num(s.new_kw), 'New', 'up') +
-            card(num(s.lost_kw), 'Lost', 'down') +
+            card(num(s.lost_kw), 'Lost', 'down');
+        var positions =
             card(num(s.p1_3), 'Pos 1–3') +
             card(num(s.p4_10), 'Pos 4–10') +
             card(num(s.p11_20), 'Pos 11–20') +
             card(num(s.p21_50), 'Pos 21–50') +
             card(num(s.p50p), 'Pos 50+');
+        host.innerHTML =
+            '<div class="gsc-cards-row gsc-cards-movement">' + movement + '</div>' +
+            '<div class="gsc-cards-row gsc-cards-positions">' + positions + '</div>';
     };
 
     /* ---------------- table ---------------- */
@@ -592,9 +597,10 @@
     };
     App.prototype.mkChart = function (drawer, id, labels, data, color, reverse, label, suffix) {
         var canvas = drawer.querySelector('canvas[data-c="' + id + '"]');
-        if (!canvas || !window.Chart) { return; }
+        var ChartLib = window.cpgaChartLib || window.Chart;
+        if (!canvas || !ChartLib) { return; }
         suffix = suffix || '';
-        var ch = new Chart(canvas.getContext('2d'), {
+        var ch = new ChartLib(canvas.getContext('2d'), {
             type: 'line',
             data: { labels: labels, datasets: [{ label: label || '', data: data, borderColor: color, backgroundColor: color + '22', fill: true, tension: 0.3, borderWidth: 2, pointRadius: 0, pointHoverRadius: 4, spanGaps: true }] },
             options: {
@@ -620,13 +626,21 @@
         this.charts.push(ch);
     };
     App.prototype.destroyCharts = function () { this.charts.forEach(function (c) { try { c.destroy(); } catch (e) {} }); this.charts = []; };
+    // Load our own Chart.js v4 into window.cpgaChartLib without clobbering the
+    // WHMCS admin's older window.Chart (see the matching note in ga.js).
     App.prototype.withChart = function (cb) {
-        if (window.Chart) { return cb(); }
+        if (window.cpgaChartLib) { return cb(); }
         if (window.__cpgaChartLoading) { window.__cpgaChartLoading.push(cb); return; }
         window.__cpgaChartLoading = [cb];
+        var prev = window.Chart;
         var s = document.createElement('script');
         s.src = this.ctx.chartSrc;
-        s.onload = function () { (window.__cpgaChartLoading || []).forEach(function (f) { f(); }); window.__cpgaChartLoading = null; };
+        s.onload = function () {
+            window.cpgaChartLib = window.Chart;
+            if (prev !== undefined) { window.Chart = prev; }
+            (window.__cpgaChartLoading || []).forEach(function (f) { f(); });
+            window.__cpgaChartLoading = null;
+        };
         document.head.appendChild(s);
     };
 

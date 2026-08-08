@@ -47,7 +47,14 @@
 .gsc-modenav button.active { color: var(--cp-accent-deep, #4752c4); border-bottom-color: var(--cp-accent, #5865f2); }
 
 /* ---- summary cards ---- */
-.gsc-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin-bottom: 14px; }
+.gsc-cards { margin-bottom: 14px; }
+.gsc-cards-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
+.gsc-cards-row + .gsc-cards-row { margin-top: 8px; }
+/* Keep each group's tiles even: 6 movement tiles, 5 position tiles per row. */
+@media (min-width: 900px) {
+    .gsc-cards-movement { grid-template-columns: repeat(6, 1fr); }
+    .gsc-cards-positions { grid-template-columns: repeat(5, 1fr); }
+}
 .gsc-card {
     background: var(--cp-surface-2, #f7f9fc); border: 1px solid var(--cp-border, #e3e8f0);
     border-radius: 12px; padding: 9px 11px;

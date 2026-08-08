@@ -9,10 +9,63 @@ All notable changes to this project are documented here. The format is based on
 _Changes for the next release go here. Suggested headings: **Added**, **Changed**,
 **Fixed**, **Removed**, **Security**._
 
-## [2.1.0] — 2026-08-09
+## [2.2.7] — 2026-08-09
 
 ### Added
 
+- **Alerts tab** — a prioritized "what needs attention" feed. Flags weekly and
+  28-day **traffic drops/spikes** and worsening bounce rate (GA4), **search-click**
+  swings, **ranking drops**, and page-2 **opportunities** (from stored Search
+  Console history), plus **revenue** up/down (WHMCS). Colour-coded cards, most
+  severe first, with an **All clear** state when nothing triggers. Threshold is
+  configurable (`alert_traffic_pct`, default 20%).
+- **Indexing tab** — Search Console **URL Inspection**. Lists your top pages by
+  impressions with a per-page **index-status** badge (Indexed / Not indexed /
+  Excluded), a box to inspect **any** URL, and a detail view (coverage, robots.txt,
+  page fetch, last crawl, Google vs declared canonical, mobile usability) with an
+  "Open in Search Console" link. Requires the connected account to be a **full**
+  user of the property.
+- **Business KPIs** on the Graph tab now sit in their own labelled **Business**
+  row (Orders / Revenue / Signups / Conversion Rate), separated from the GA4
+  traffic tiles.
+- The Search Console **summary** is split into two rows — movement stats
+  (Tracked / Improved / Declined / Unchanged / New / Lost) above the position
+  buckets (Pos 1–3 … 50+).
+
+### Changed
+
+- **Reworked the dashboard/widget header** — a gradient property badge and a
+  single segmented date-range control with an accent **Apply** button, replacing
+  the stray icon and three loose inputs.
+
+### Fixed
+
+- **Blank dashboard (regression since 2.2.0).** A PHP notice was printing into the
+  JSON response and corrupting it, which silently blanked the widget. The endpoint
+  now suppresses inline errors (they still log) and the front-end surfaces the real
+  message instead of hiding the card.
+- **Chart.js version collision.** The WHMCS admin ships its own older Chart.js;
+  building our v4-style graph against it threw `getBasePixel` and flooded the
+  console with `"skip"` errors (and broke the native System Overview graph). The
+  module now loads its **own Chart.js v4** in isolation and restores the host's
+  global, so both charts work.
+- No-revenue sites no longer show an empty flat **Revenue** line and a phantom
+  right-hand axis on the Graph tab — the overlay is dropped when there's nothing to
+  plot.
+- The dashboard **widget** now re-flows the admin masonry grid (via a
+  `ResizeObserver`) when tall content such as Search Console loads, so neighbouring
+  widgets no longer overlap.
+
+## [2.2.0] — 2026-08-09
+
+### Added
+
+- **WHMCS revenue overlay on the traffic graph.** The Graph tab now overlays your
+  WHMCS business data on the GA4 chart: a **Revenue** line on a second (right) axis,
+  plus KPI tiles for **Orders**, **Revenue**, **Signups**, and **Conversion Rate**
+  (orders ÷ sessions). Business figures come from your WHMCS database
+  (orders/transactions/clients) in the default currency; the overlay degrades
+  gracefully to the plain traffic graph if that data isn't available.
 - **Service Account authentication** — a second connection method alongside OAuth.
   Paste a Google service-account JSON key and share your GA4 property + Search
   Console site with the service-account email. **No OAuth consent screen, no app

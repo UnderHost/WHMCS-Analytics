@@ -14,7 +14,7 @@
 
 ## 1. Download
 
-Grab **`whmcs-analytics-2.1.0.zip`** from the
+Grab **`whmcs-analytics-2.2.7.zip`** from the
 [latest release](../../releases/latest).
 
 ## 2. Upload / extract
@@ -32,7 +32,7 @@ Extract it **into your WHMCS root** so the files land at
 - **SSH / SFTP:** upload and unzip:
   ```bash
   cd /path/to/whmcs
-  unzip whmcs-analytics-2.1.0.zip
+  unzip whmcs-analytics-2.2.7.zip
   ```
 
 After extraction you should have:
@@ -90,7 +90,7 @@ folder first**, then extract the new ZIP:
 
 ```bash
 rm -rf /path/to/whmcs/modules/addons/whmcs_analytics
-# then extract the new whmcs-analytics-2.1.0.zip at the WHMCS root
+# then extract the new whmcs-analytics-2.2.7.zip at the WHMCS root
 ```
 
 > **Important — upgrading from a pre-2.0 build:** earlier versions shipped the dashboard

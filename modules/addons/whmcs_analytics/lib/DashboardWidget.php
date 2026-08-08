@@ -84,18 +84,20 @@ class WhmcsAnalyticsWidget extends AbstractWidget
             'screen_resolution' => 'Screen Resolution',
             'source'            => 'Source',
             'keywords'          => 'Search Console',
+            'indexing'          => 'Indexing',
+            'alerts'            => 'Alerts',
             'advisor'           => 'SEO Advisor',
         ];
 
         ob_start(); ?>
 <div class="cpga cpga-embed" data-ajax="<?= htmlspecialchars($ajax) ?>" data-token="<?= htmlspecialchars(generate_token('plain')) ?>">
     <div class="cpga-head">
-        <div class="cpga-property"><i class="fas fa-chart-line"></i> <?= htmlspecialchars($data['property']) ?></div>
+        <div class="cpga-property"><i class="fas fa-chart-line"></i> <span class="cpga-prop-name"><?= htmlspecialchars($data['property'] ?: 'Analytics') ?></span></div>
         <div class="cpga-range">
-            <input type="date" class="cpga-start form-control input-sm">
+            <input type="date" class="cpga-start">
             <span>→</span>
-            <input type="date" class="cpga-end form-control input-sm">
-            <button class="btn btn-sm btn-default cpga-apply" type="button">Apply</button>
+            <input type="date" class="cpga-end">
+            <button class="cpga-apply" type="button">Apply</button>
         </div>
     </div>
     <ul class="cpga-tabs">
@@ -112,16 +114,16 @@ class WhmcsAnalyticsWidget extends AbstractWidget
     </div>
     <div class="cpga-foot"><a href="https://underhost.com" target="_blank" rel="noopener"><i class="fas fa-bolt"></i> Powered by <strong>UnderHost</strong></a></div>
 </div>
-<link rel="stylesheet" href="<?= htmlspecialchars($assets) ?>/ga.css?v=2.1.0">
-<link rel="stylesheet" href="<?= htmlspecialchars($assets) ?>/gsc.css?v=2.1.0">
+<link rel="stylesheet" href="<?= htmlspecialchars($assets) ?>/ga.css?v=2.2.7">
+<link rel="stylesheet" href="<?= htmlspecialchars($assets) ?>/gsc.css?v=2.2.7">
 <script>
 window.cpgaChartSrc = "<?= htmlspecialchars($assets) ?>/chart.umd.min.js";
 window.cpgaEChartsSrc = "<?= htmlspecialchars($assets) ?>/echarts.min.js";
-window.cpgaWorldGeoUrl = "<?= htmlspecialchars($assets) ?>/world.geo.json?v=2.1.0";
+window.cpgaWorldGeoUrl = "<?= htmlspecialchars($assets) ?>/world.geo.json?v=2.2.7";
 </script>
-<script src="<?= htmlspecialchars($assets) ?>/geomap.js?v=2.1.0"></script>
-<script src="<?= htmlspecialchars($assets) ?>/gsc.js?v=2.1.0"></script>
-<script src="<?= htmlspecialchars($assets) ?>/ga.js?v=2.1.0"></script>
+<script src="<?= htmlspecialchars($assets) ?>/geomap.js?v=2.2.7"></script>
+<script src="<?= htmlspecialchars($assets) ?>/gsc.js?v=2.2.7"></script>
+<script src="<?= htmlspecialchars($assets) ?>/ga.js?v=2.2.7"></script>
         <?php
         return ob_get_clean();
     }

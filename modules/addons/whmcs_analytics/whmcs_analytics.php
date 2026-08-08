@@ -26,7 +26,7 @@ function whmcs_analytics_config()
     return [
         'name'        => 'WHMCS Analytics',
         'description' => 'Google Analytics 4 + Search Console on your WHMCS admin dashboard: live GA4 reports, a world-map heatmap, and Search Console keyword tracking with pluggable history storage (local DB, external MySQL, or libSQL/Turso).',
-        'version'     => '2.1.0',
+        'version'     => '2.2.7',
         'author'      => 'UnderHost',
         'language'    => 'english',
         'fields'      => [
@@ -554,14 +554,14 @@ function _cpga_dashboard_html($systemUrl)
     $assets = htmlspecialchars($systemUrl . '/modules/addons/whmcs_analytics/assets');
     $ajax   = htmlspecialchars($systemUrl . '/modules/addons/whmcs_analytics/ajax.php');
     $token  = htmlspecialchars(generate_token('plain'));
-    $ver    = '2.1.0';
+    $ver    = '2.2.7';
 
     $tabs = [
         'graph' => 'Graph', 'realtime' => 'Real Time', 'pages' => 'Pages',
         'countries' => 'Countries', 'browsers' => 'Browsers', 'languages' => 'Languages',
         'operating_systems' => 'Operating Systems', 'devices' => 'Devices',
         'screen_resolution' => 'Screen Resolution', 'source' => 'Source', 'keywords' => 'Search Console',
-        'advisor' => 'SEO Advisor',
+        'indexing' => 'Indexing', 'alerts' => 'Alerts', 'advisor' => 'SEO Advisor',
     ];
     $tabsHtml = '';
     foreach ($tabs as $key => $label) {
@@ -572,11 +572,11 @@ function _cpga_dashboard_html($systemUrl)
     return '<div class="panel panel-default cpga-embed"><div class="panel-body">'
         . '<div class="cpga" data-ajax="' . $ajax . '" data-token="' . $token . '">'
         . '<div class="cpga-head">'
-        . '<div class="cpga-property"><i class="fas fa-chart-line"></i> Website analytics</div>'
+        . '<div class="cpga-property"><i class="fas fa-chart-line"></i> <span class="cpga-prop-name">Website analytics</span></div>'
         . '<div class="cpga-range">'
-        . '<input type="date" class="cpga-start form-control input-sm"><span>&rarr;</span>'
-        . '<input type="date" class="cpga-end form-control input-sm">'
-        . '<button class="btn btn-sm btn-default cpga-apply" type="button">Apply</button>'
+        . '<input type="date" class="cpga-start"><span>&rarr;</span>'
+        . '<input type="date" class="cpga-end">'
+        . '<button class="cpga-apply" type="button">Apply</button>'
         . '</div></div>'
         . '<ul class="cpga-tabs">' . $tabsHtml . '</ul>'
         . '<div class="cpga-body">'

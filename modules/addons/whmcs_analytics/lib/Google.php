@@ -23,6 +23,7 @@ class Google
     const ADMIN_API    = 'https://analyticsadmin.googleapis.com/v1beta';
     const DATA_API     = 'https://analyticsdata.googleapis.com/v1beta';
     const SC_API       = 'https://www.googleapis.com/webmasters/v3';
+    const SC_INSPECT   = 'https://searchconsole.googleapis.com/v1';
     const TABLE        = 'mod_whmcs_analytics';
 
     /** Ensure the settings table exists (called on activate). */
@@ -334,6 +335,26 @@ class Google
         } while ($got === $body['rowLimit'] && count($all) < $maxRows);
 
         return ['rows' => $all];
+    }
+
+    /**
+     * URL Inspection API — index status for a single URL within the stored site.
+     * Requires the account to be an owner/full user of the property. Returns the
+     * raw Google payload (['inspectionResult' => …]) or an ['error' => …] body.
+     */
+    public static function urlInspect($clientId, $clientSecret, $inspectionUrl, $siteUrl = null)
+    {
+        $token = self::accessToken($clientId, $clientSecret);
+        $site  = $siteUrl ?: self::get('sc_site');
+        if (!$site) {
+            throw new \RuntimeException('No Search Console site selected in the module settings.');
+        }
+        return self::httpPost(
+            self::SC_INSPECT . '/urlInspection/index:inspect',
+            ['inspectionUrl' => $inspectionUrl, 'siteUrl' => $site, 'languageCode' => 'en-US'],
+            $token,
+            true
+        );
     }
 
     /* ---------------- GA4 Admin + Data ---------------------------------- */

@@ -3,13 +3,39 @@
 .cpga-empty { padding: 22px; text-align: center; color: var(--cp-text-soft, #64748b); }
 .cpga-head {
     display: flex; align-items: center; justify-content: space-between;
-    flex-wrap: wrap; gap: 8px; margin-bottom: 10px;
+    flex-wrap: wrap; gap: 10px; margin-bottom: 12px;
 }
-.cpga-property { font-weight: 800; color: var(--cp-text, #16233a); }
-.cpga-property i { color: var(--cp-accent, #5865f2); margin-right: 5px; }
-.cpga-range { display: inline-flex; align-items: center; gap: 6px; }
-.cpga-range input[type="date"] { width: 140px; }
-.cpga-range span { color: var(--cp-text-faint, #8a97ac); }
+.cpga-property {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-weight: 800; font-size: 14px; color: var(--cp-text, #16233a); min-width: 0;
+}
+.cpga-property i {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 9px; margin: 0; flex: none;
+    background: linear-gradient(135deg, var(--cp-accent, #5865f2), #00c2ff);
+    color: #fff; font-size: 13px; box-shadow: 0 2px 6px rgba(88,101,242,.3);
+}
+.cpga-property .cpga-prop-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Date range + Apply as one segmented control instead of three loose inputs. */
+.cpga-range {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: var(--cp-surface-2, #f7f9fc);
+    border: 1px solid var(--cp-border, #e3e8f0);
+    border-radius: 10px; padding: 3px 4px;
+}
+.cpga-range input[type="date"] {
+    width: 128px; height: 28px; padding: 0 6px; font-size: 12px;
+    border: 1px solid transparent; background: transparent; box-shadow: none;
+    border-radius: 7px; color: var(--cp-text, #16233a);
+}
+.cpga-range input[type="date"]:focus { background: #fff; border-color: var(--cp-accent, #5865f2); outline: none; }
+.cpga-range span { color: var(--cp-text-faint, #8a97ac); font-size: 11px; padding: 0 1px; }
+.cpga-apply {
+    height: 28px; padding: 0 12px; border-radius: 7px; border: none;
+    background: var(--cp-accent, #5865f2); color: #fff; font-weight: 700; font-size: 12px;
+    cursor: pointer; transition: background .15s;
+}
+.cpga-apply:hover, .cpga-apply:focus { background: var(--cp-accent-deep, #4752c4); color: #fff; }
 
 .cpga-tabs {
     display: flex; flex-wrap: wrap; gap: 2px; list-style: none;
@@ -28,10 +54,20 @@
 .cpga-tabs a.active { color: var(--cp-accent-deep, #4752c4); border-bottom-color: var(--cp-accent, #5865f2); }
 
 .cpga-loading { padding: 26px; text-align: center; color: var(--cp-text-soft, #64748b); }
-.cpga-kpis {
+.cpga-kpis { margin-bottom: 14px; }
+.cpga-kpi-row {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 10px; margin-bottom: 14px;
+    gap: 10px;
 }
+.cpga-kpi-label {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em;
+    color: var(--cp-text-soft, #5b6b84); margin: 14px 2px 8px;
+}
+.cpga-kpi-label::after {
+    content: ""; flex: 1; height: 1px; background: var(--cp-border, #e3e8f0);
+}
+.cpga-kpis-biz .cpga-kpi { background: var(--cp-surface, #fff); border-style: dashed; }
 .cpga-kpi {
     background: var(--cp-surface-2, #f7f9fc);
     border: 1px solid var(--cp-border, #e3e8f0);
@@ -82,7 +118,7 @@
 .cpga-embed .cpga { font-size: 13.5px; }
 .cpga-embed .cpga-chart-wrap { height: 300px; }
 .cpga-embed .cpga-chart { height: 300px !important; }
-.cpga-embed .cpga-kpis { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+.cpga-embed .cpga-kpi-row { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
 .cpga-embed .cpga-property { font-size: 15px; }
 
 /* --- AI SEO Advisor --- */
@@ -99,6 +135,56 @@
 .cpga-advisor-md p { margin: 6px 0; }
 .cpga-advisor-md code { background: var(--cp-surface-2, #f7f9fc); padding: 1px 5px; border-radius: 5px; }
 .cpga-advisor-hint { margin-top: 8px; color: var(--cp-text-soft, #5b6b84); }
+
+/* --- Alerts --- */
+.cpga-alerts-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.cpga-alerts-head span { font-size: 15px; font-weight: 800; }
+.cpga-alerts-head span i { color: var(--cp-accent, #5865f2); margin-right: 5px; }
+.cpga-alerts-head small { color: var(--cp-text-soft, #5b6b84); font-size: 11.5px; }
+.cpga-alert {
+    display: flex; align-items: flex-start; gap: 12px;
+    border: 1px solid var(--cp-border, #e3e8f0); border-left-width: 4px;
+    border-radius: 10px; padding: 12px 14px; margin-bottom: 8px;
+    background: var(--cp-surface-2, #f7f9fc);
+}
+.cpga-alert .ic { width: 26px; text-align: center; font-size: 16px; margin-top: 1px; }
+.cpga-alert .bd { flex: 1; min-width: 0; }
+.cpga-alert .t { font-weight: 700; font-size: 13.5px; margin-bottom: 2px; }
+.cpga-alert .d { font-size: 12.5px; color: var(--cp-text-soft, #5b6b84); line-height: 1.45; }
+.cpga-alert .ch { font-weight: 800; font-variant-numeric: tabular-nums; font-size: 13px; white-space: nowrap; align-self: center; }
+.cpga-alert-critical { border-left-color: #e5484d; } .cpga-alert-critical .ic, .cpga-alert-critical .ch { color: #e5484d; }
+.cpga-alert-warning  { border-left-color: #f5a524; } .cpga-alert-warning .ic, .cpga-alert-warning .ch { color: #d98a00; }
+.cpga-alert-good     { border-left-color: #21a366; } .cpga-alert-good .ic, .cpga-alert-good .ch { color: #21a366; }
+.cpga-alert-info     { border-left-color: #5865f2; } .cpga-alert-info .ic, .cpga-alert-info .ch { color: #5865f2; }
+
+/* --- Indexing (URL Inspection) --- */
+.cpga-idx-tools { display: flex; gap: 8px; margin-bottom: 10px; }
+.cpga-idx-url { flex: 1; }
+.cpga-idx-hint { font-size: 12px; color: var(--cp-text-soft, #5b6b84); margin: 4px 0 10px; }
+.cpga-idx-page span { display: inline-block; max-width: 520px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; }
+.cpga-idx-badge {
+    display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 999px;
+    border: 1px solid transparent; white-space: nowrap;
+}
+.cpga-idx-badge.idx-ok { background: rgba(33,163,102,.12); color: #1a8a55; border-color: rgba(33,163,102,.35); }
+.cpga-idx-badge.idx-bad { background: rgba(229,72,77,.12); color: #d13b40; border-color: rgba(229,72,77,.35); }
+.cpga-idx-badge.idx-warn { background: rgba(245,165,36,.15); color: #b9791a; border-color: rgba(245,165,36,.4); }
+.cpga-idx-badge.idx-neutral { background: var(--cp-surface-2, #f0f3f8); color: var(--cp-text-soft, #5b6b84); border-color: var(--cp-border, #e3e8f0); }
+.cpga-idx-loading { padding: 12px; color: var(--cp-text-soft, #5b6b84); }
+.cpga-idx-detail {
+    border: 1px solid var(--cp-border, #e3e8f0); border-left-width: 4px; border-radius: 10px;
+    padding: 12px 14px; margin-bottom: 12px; background: var(--cp-surface-2, #f7f9fc);
+}
+.cpga-idx-detail.idx-ok { border-left-color: #21a366; }
+.cpga-idx-detail.idx-bad { border-left-color: #e5484d; }
+.cpga-idx-detail.idx-warn { border-left-color: #f5a524; }
+.cpga-idx-detail.idx-neutral { border-left-color: #9aa7bd; }
+.cpga-idx-detail-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+.cpga-idx-url-link { font-size: 12.5px; word-break: break-all; }
+.cpga-idx-kv { display: flex; justify-content: space-between; gap: 16px; padding: 4px 0; border-top: 1px dashed var(--cp-border, #e8ecf3); font-size: 12.5px; }
+.cpga-idx-kv span { color: var(--cp-text-soft, #5b6b84); }
+.cpga-idx-kv b { text-align: right; word-break: break-all; }
+.cpga-idx-open { display: inline-block; margin-top: 10px; font-size: 12.5px; }
 
 /* --- Subtle "Powered by UnderHost" footer credit --- */
 .cpga-foot { margin-top: 12px; padding-top: 8px; border-top: 1px solid var(--cp-border, #e3e8f0); text-align: right; }
