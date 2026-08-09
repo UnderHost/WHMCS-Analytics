@@ -114,6 +114,3 @@ MIT License. Built and maintained by **[UnderHost](https://underhost.com/)**.
 
 Bundled third-party libraries: [Chart.js](https://www.chartjs.org/) (MIT) and
 [Apache ECharts](https://echarts.apache.org/) (Apache-2.0), both included locally.
-
-Parts of the development and documentation were assisted by
-**[Claude](https://www.anthropic.com/claude)** (Anthropic).
