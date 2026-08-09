@@ -6,12 +6,12 @@
 
 <p align="center">
   <strong>Google Analytics 4 + Google Search Console, right inside your WHMCS admin.</strong><br>
-  Live traffic reports, a world-map heatmap, keyword rank tracking, and an optional AI SEO advisor —
-  with no theme edits, on a stock WHMCS install.
+  Live traffic reports, a world-map heatmap, keyword rank tracking, URL index-status checks,
+  anomaly alerts, and an optional AI SEO advisor — with no theme edits, on a stock WHMCS install.
 </p>
 
 <p align="center">
-  <img alt="Version" src="https://img.shields.io/badge/version-2.2.7-5865F2">
+  <img alt="Version" src="https://img.shields.io/badge/version-2.2.8-5865F2">
   <img alt="WHMCS" src="https://img.shields.io/badge/WHMCS-8.x-00b1b3">
   <img alt="PHP" src="https://img.shields.io/badge/PHP-8.1%2B-777bb3">
   <img alt="License" src="https://img.shields.io/badge/license-MIT-green">
@@ -37,6 +37,13 @@ website's traffic and SEO data on the WHMCS admin dashboard — as a home-page *
 - **Top Movers** and automatic **SEO Opportunities** (CTR gaps, page-one chances, declining keywords)
 - Per-keyword history: position, clicks, impressions, and CTR over time
 - A world-map heatmap of search impressions by country
+
+### Indexing & Alerts
+- **URL Inspection** — check any page's Google index status (Indexed / Not indexed / Excluded)
+  from the dashboard, with coverage, canonical, robots.txt, last-crawl, and mobile details
+- **Alerts** — a prioritized feed of what needs attention: weekly & 28-day traffic drops or
+  spikes, worsening bounce rate, search-click swings, ranking drops, page-two opportunities,
+  and (from WHMCS) revenue up or down
 
 ### AI SEO Advisor *(optional — bring your own key)*
 - Turns your GA4 + Search Console data into prioritized, specific recommendations
@@ -66,7 +73,7 @@ Search Console history is stored in the backend **you** choose:
 
 ## Quick start
 
-1. **Download** `whmcs-analytics-2.2.7.zip` from the [latest release](../../releases/latest).
+1. **Download** `whmcs-analytics-2.2.8.zip` from the [latest release](../../releases/latest).
 2. **Extract** it into your WHMCS root — it drops files into `modules/addons/whmcs_analytics/`.
 3. In WHMCS: **Configuration → System Settings → Addon Modules**, find **WHMCS Analytics**, click
    **Activate**, and tick the admin roles that may use it.
@@ -107,3 +114,6 @@ MIT License. Built and maintained by **[UnderHost](https://underhost.com/)**.
 
 Bundled third-party libraries: [Chart.js](https://www.chartjs.org/) (MIT) and
 [Apache ECharts](https://echarts.apache.org/) (Apache-2.0), both included locally.
+
+Parts of the development and documentation were assisted by
+**[Claude](https://www.anthropic.com/claude)** (Anthropic).

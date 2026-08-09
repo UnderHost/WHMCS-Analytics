@@ -9,6 +9,15 @@ All notable changes to this project are documented here. The format is based on
 _Changes for the next release go here. Suggested headings: **Added**, **Changed**,
 **Fixed**, **Removed**, **Security**._
 
+## [2.2.8] — 2026-08-09
+
+### Changed
+
+- **Docs & in-app Setup guide** now describe the **Indexing** (URL Inspection) and
+  **Alerts** tabs, and the README lists them among the features.
+- Added a credit acknowledging that parts of the development and documentation were
+  assisted by Claude (Anthropic).
+
 ## [2.2.7] — 2026-08-09
 
 ### Added

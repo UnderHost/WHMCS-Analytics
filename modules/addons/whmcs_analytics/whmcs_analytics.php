@@ -26,7 +26,7 @@ function whmcs_analytics_config()
     return [
         'name'        => 'WHMCS Analytics',
         'description' => 'Google Analytics 4 + Search Console on your WHMCS admin dashboard: live GA4 reports, a world-map heatmap, and Search Console keyword tracking with pluggable history storage (local DB, external MySQL, or libSQL/Turso).',
-        'version'     => '2.2.7',
+        'version'     => '2.2.8',
         'author'      => 'UnderHost',
         'language'    => 'english',
         'fields'      => [
@@ -539,6 +539,12 @@ function _cpga_guide_html($callbackUri, $systemUrl)
         . '<strong>Production</strong>. Publishing is recommended: apps left in Testing have refresh tokens that '
         . '<strong>expire after 7 days</strong>, which would break the daily sync. At the &ldquo;unverified app&rdquo; screen, '
         . 'click <strong>Advanced &rarr; Go to &hellip; (unsafe)</strong> to continue with your own app.</div>';
+    $h .= '<h4 style="margin-top:18px">What you get on the dashboard</h4>';
+    $h .= '<p class="text-muted">Live GA4 reports (Graph, Real Time, Pages, Countries with a world-map heatmap, '
+        . 'Browsers, Languages, Operating Systems, Devices, Screen Resolution, Source), the full '
+        . '<strong>Search Console</strong> app, an <strong>Indexing</strong> tab (Google <em>URL Inspection</em> — '
+        . 'check any page&rsquo;s index status), an <strong>Alerts</strong> tab (traffic, ranking, and revenue '
+        . 'anomalies at a glance), and the optional <strong>SEO Advisor</strong>.</p>';
     $h .= '</div></div>';
     $h .= _cpga_underhost_banner();
     return $h;
@@ -554,7 +560,7 @@ function _cpga_dashboard_html($systemUrl)
     $assets = htmlspecialchars($systemUrl . '/modules/addons/whmcs_analytics/assets');
     $ajax   = htmlspecialchars($systemUrl . '/modules/addons/whmcs_analytics/ajax.php');
     $token  = htmlspecialchars(generate_token('plain'));
-    $ver    = '2.2.7';
+    $ver    = '2.2.8';
 
     $tabs = [
         'graph' => 'Graph', 'realtime' => 'Real Time', 'pages' => 'Pages',
